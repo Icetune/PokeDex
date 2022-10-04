@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+
+    <script>
+
+        let currentPokemon;
+        let currentPokemonArtwork;
+
+        async function loadPokemon() {
+            let url = `https://pokeapi.co/api/v2/pokemon/charmander`;
+            let response = await fetch(url);
+            currentPokemon = await response.json();
+            currentPokemonArtwork = currentPokemon['sprites']['other']['official-artwork']['front_default'];
+            console.log(currentPokemonArtwork);
+            console.log('Loaded Pokemon:', currentPokemon);
+
+            renderPokemonInfo();
+        }
+
+        function renderPokemonInfo() {
+            document.getElementById('pokemonName').innerHTML = currentPokemon['name'];
+            document.getElementById('pokemonArtwork').src = currentPokemonArtwork;
+        }
+
+    </script>
+
+    <style>
+        #pokedex {
+            min-height: 50vh;
+            background-color: rgb(151, 13, 13);
+            color: white;
+        }
+    </style>
+
+</head>
+
+<body onload="loadPokemon()">
+
+    <div id="pokedex">
+        <h1 id="pokemonName">Name</h1>
+        <img id="pokemonArtwork" src="">
+    </div>
+
+</body>
+
+</html>
