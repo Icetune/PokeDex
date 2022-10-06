@@ -7,44 +7,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokedex</title>
 
-    <script>
-
-        let currentPokemon;
-        let currentPokemonArtwork;
-
-        async function loadPokemon() {
-            let url = `https://pokeapi.co/api/v2/pokemon/charmander`;
-            let response = await fetch(url);
-            currentPokemon = await response.json();
-            currentPokemonArtwork = currentPokemon['sprites']['other']['official-artwork']['front_default'];
-            console.log(currentPokemonArtwork);
-            console.log('Loaded Pokemon:', currentPokemon);
-
-            renderPokemonInfo();
-        }
-
-        function renderPokemonInfo() {
-            document.getElementById('pokemonName').innerHTML = currentPokemon['name'];
-            document.getElementById('pokemonArtwork').src = currentPokemonArtwork;
-        }
-
-    </script>
-
-    <style>
-        #pokedex {
-            min-height: 50vh;
-            background-color: rgb(151, 13, 13);
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fonts.css">
+    <script src="script.js"></script>
 
 </head>
 
 <body onload="loadPokemon()">
 
-    <div id="pokedex">
-        <h1 id="pokemonName">Name</h1>
+    <header id="pokedex">
+        <div class="pokemon-header-text">
+            <div class="pokemon-header-text-left">
+                <img src="icons/pfeil-links.png">
+                <h1 id="pokemonName"></h1>
+                <div class="pokemon-header-types">
+                    <p id="pokemonFirstType" class="pokemon-header-type"></p>
+                    <p id="pokemonSecondType" style="display:none;" class="pokemon-header-type"></p>
+                </div>
+            </div>
+            <div class="pokemon-header-text-right">
+                <img src="icons/herz.png">
+                <p id="pokemonNumber" class="pokemon-header-number"></p>
+                <p class="pokemon-header-animal">Lizard Pokemon</p>
+            </div>
+
+        </div>
+
         <img id="pokemonArtwork" src="">
+
+    </header>
+
+    <div class="info-container">
+
+        <div class="nav-bar">
+            <p>About</p>
+            <p>Base Stats</p>
+            <p>Evolution</p>
+            <p>Moves</p>
+        </div>
+
     </div>
 
 </body>
