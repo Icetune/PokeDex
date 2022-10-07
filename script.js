@@ -12,26 +12,26 @@ let backgroundColors2 = [{ 'normal': '#a7a7a7', 'fire': '#fa8975', 'water': '#7b
 
 
 async function loadPokemon() {
-    let url = `https://pokeapi.co/api/v2/pokemon/torterra`;
+    let url = `https://pokeapi.co/api/v2/pokemon/charmander`;
     let response = await fetch(url);
     currentPokemon = await response.json();
 
-    let evolutions = `https://pokeapi.co/api/v2/evolution-chain/{id}/`;
-    
-
-
-
-
-
-
-
     renderPokemonInfo();
+
+
+
+
+    renderPokemonEvolutions();
+
+
+
+
 
     console.log('Loaded Pokemon:', currentPokemon);
 }
 
 function renderPokemonInfo() {
-    getPokemonArtwork();
+    getMainPokemonArtwork();
     getPokemonTypes();
     getPokemonName();
     getPokemonNumber();
@@ -47,7 +47,7 @@ function renderPokemonInfo() {
 
 /*********************************************POKEMON INFO***********************************************/
 
-function getPokemonArtwork() {
+function getMainPokemonArtwork() {
     currentPokemonArtwork = currentPokemon['sprites']['other']['official-artwork']['front_default'];
     document.getElementById('pokemonArtwork').src = currentPokemonArtwork;
 }
@@ -69,7 +69,7 @@ function getPokemonTypes() {
         document.getElementById('pokemonSecondType').innerHTML = currentPokemonType2;
         document.getElementById('pokemonSecondType').style = 'display:block;'
         setBackgroundForTwoTypes();
-    } 
+    }
 }
 
 function setBackgroundForTwoTypes() {
@@ -100,3 +100,86 @@ function getPokemonNumber() {
 }
 
 /*********************************************POKEMON INFO***********************************************/
+
+
+
+
+
+
+
+
+
+/*********************************************POKEMON EVOLUTION***********************************************/
+
+async function renderPokemonEvolutions() {
+    let pokemonID = currentPokemon['id']; // The ID (Number) of the Pokemon is teh key
+    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${pokemonID}/`;
+    let pokemonSpeciesResponse = await fetch(pokemonSpecies);
+    let pokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // This JSON contains the species of the Pokemon(this is necessary to get the evolution-chain)
+
+    let pokemonEvolutionURL = pokemonSpeciesAsJson['evolution_chain']['url'];
+    let pokemonEvolution = pokemonEvolutionURL;
+    let pokemonEvolutionResponse = await fetch(pokemonEvolution);
+    let pokemonEvolutionAsJson = await pokemonEvolutionResponse.json(); // This JSON contains the evolution-chain, which means the names of all the pokemons in the ev-chain
+
+    let pokemonStage1 = pokemonEvolutionAsJson['chain']['species']['name'];
+    console.log(pokemonStage1);
+    let evolution1URL = `https://pokeapi.co/api/v2/pokemon/${pokemonStage1}`;
+    let evolution1Response = await fetch(evolution1URL);
+    evolution1AsJSON = await evolution1Response.json();
+    let evolution1Artwork = evolution1AsJSON['sprites']['other']['official-artwork']['front_default'];
+    document.getElementById('evolution-1').src = evolution1Artwork;
+
+    if (pokemonEvolutionAsJson['chain']['evolves_to'].hasOwnProperty(0)) {
+        console.log('zweite stufe');
+
+        let pokemonStage2 = pokemonEvolutionAsJson['chain']['evolves_to']['0']['species']['name'];
+        console.log(pokemonStage2);
+        let evolution2URL = `https://pokeapi.co/api/v2/pokemon/${pokemonStage2}`;
+        let evolution2Response = await fetch(evolution2URL);
+        evolution2AsJSON = await evolution2Response.json();
+        let evolution2Artwork = evolution2AsJSON['sprites']['other']['official-artwork']['front_default'];
+        document.getElementById('evolution-2').src = evolution2Artwork;
+
+        if (pokemonEvolutionAsJson['chain']['evolves_to']['0']['evolves_to'].hasOwnProperty(0)) {
+            let pokemonStage3 = pokemonEvolutionAsJson['chain']['evolves_to']['0']['evolves_to']['0']['species']['name'];
+            console.log(pokemonStage3);
+            let evolution3URL = `https://pokeapi.co/api/v2/pokemon/${pokemonStage3}`;
+            let evolution3Response = await fetch(evolution3URL);
+            evolution3AsJSON = await evolution3Response.json();
+            let evolution3Artwork = evolution3AsJSON['sprites']['other']['official-artwork']['front_default'];
+            document.getElementById('evolution-3').src = evolution3Artwork;
+        } else {
+            document.getElementById('evolution-3').src = '';
+        }
+
+    } else {
+        document.getElementById('evolution-2').src = '';
+        document.getElementById('evolution-3').src = '';
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*********************************************POKEMON EVOLUTION***********************************************/

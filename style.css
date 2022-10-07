@@ -93,3 +93,32 @@ h1 {
     padding-top: 48px;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.evolution-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
