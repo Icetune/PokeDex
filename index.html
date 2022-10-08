@@ -40,19 +40,63 @@
     <div class="info-container">
 
         <div class="nav-bar">
-            <p>About</p>
+            <p onclick="renderPokemonDescription()">About</p>
             <p>Base Stats</p>
-            <p>Evolution</p>
+            <p onclick="renderPokemonEvolutions()">Evolution</p>
             <p>Moves</p>
         </div>
 
-        <div class="evolution-container">
+        <div id="content-container">
 
-            <img id="evolution-1" style="width:150px; margin: 30px;" src="">
-            <img id="evolution-2" style="width:150px; margin: 30px;" src="">
-            <img id="evolution-3" style="width:150px; margin: 30px;" src="">
+            <div id="pokemon-description"></div>
+
+            <table class="about-table">
+                <tr>
+                    <td class="td-left">
+                        Abilities
+                    </td>
+                    <td class="td-right" id="abilities">
+                        <p>Ability1</p>
+                        <p>Ability1</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-left">
+                        Weight
+                    </td>
+                    <td class="td-right" id="weight">
+                        430kg
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-left">
+                        Legendary
+                    </td>
+                    <td class="td-right" id="legendary">
+                        Yes
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-left">
+                        Genera
+                    </td>
+                    <td class="td-right" id="genera">
+                        Lava Dome Pokemon
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-left">
+                        Shape
+                    </td>
+                    <td class="td-right" id="shape">
+                        Quadruped
+                    </td>
+                </tr>
+            </table>
 
         </div>
+
+
 
     </div>
 

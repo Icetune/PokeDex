@@ -1,8 +1,18 @@
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0px;
 
     font-family: 'Open Sans';
     font-style: normal;
+}
+
+#content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 
@@ -54,7 +64,7 @@ h1 {
 
 .pokemon-header-number {
     font-weight: 700;
-    margin-top: 36px;
+    margin-top: 32px;
 }
 
 .pokemon-header-animal {
@@ -64,7 +74,7 @@ h1 {
 
 #pokemonArtwork {
     width: 250px;
-    height: 250px;   
+    height: 250px;
 }
 
 /****************************************HEAD SECTION***********************************/
@@ -95,10 +105,73 @@ h1 {
 }
 
 
+/****************************************INFO SECTION***********************************/
 
 
 
 
+
+
+/****************************************ABOUT POKEMON***********************************/
+
+#pokemon-description {
+    margin-block: 16px;
+    margin-inline: 22px;
+    padding: 4px;
+    min-height: 80px;
+
+    font-family: 'Aldrich';
+    font-size: 18px;
+    font-weight: 400;
+
+    color: rgb(8, 29, 11);
+    border: 3px solid rgb(53, 53, 53);
+    background-color: rgb(36, 179, 136);
+}
+
+
+table {
+    width: 80%;
+    font-weight: 500;
+    border-collapse: collapse;
+}
+
+table td {
+    border: 1px solid black;
+}
+
+table tr:first-child td {
+    border-top: 0;
+}
+
+table tr:last-child td {
+    border-bottom: 0;
+}
+
+table tr td:first-child {
+    border-left: 0;
+}
+
+table tr td:last-child {
+    border-right: 0;
+}
+
+tr {
+    height: 32px;
+}
+
+.td-left {
+    padding-right: 28px;
+}
+
+.td-right {
+    
+}
+
+
+
+
+/****************************************ABOUT POKEMON***********************************/
 
 
 
@@ -121,4 +194,41 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.evolution-name {
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.evolution-img-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.evolution-img {
+    width: 170px;
+    margin-bottom: 16px;
+}
+
+.evolution-img-background {
+    width: 200px;
+    height: 100px;
+    position: relative;
+    bottom: 90px;
+    opacity: 0.2;
+    z-index: -500;
+}
+
+.evolution-trigger {
+    display: flex;
+    align-items: center;
+    padding-block: 4px;
+    padding-inline: 8px;
+    border-radius: 10px;
+
+    background-color: rgb(233, 233, 233);
 }
