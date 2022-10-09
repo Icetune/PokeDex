@@ -137,7 +137,7 @@ table {
 }
 
 table td {
-    border: 1px solid black;
+    border: 1px solid rgb(77, 77, 77);
 }
 
 table tr:first-child td {
@@ -165,7 +165,7 @@ tr {
 }
 
 .td-right {
-    
+    padding-left: 12px;
 }
 
 
