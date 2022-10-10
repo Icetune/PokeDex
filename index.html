@@ -8,53 +8,134 @@
     <title>Pokedex</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pokemon-entire.css">
     <link rel="stylesheet" href="fonts.css">
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
 </head>
 
-<body onload="loadPokemonAPIs()">
+<body>
 
-    <header id="pokedex">
-        <div class="pokemon-header-text">
-            <div class="pokemon-header-text-left">
-                <img src="icons/pfeil-links.png">
-                <h1 id="pokemonName"></h1>
-                <div class="pokemon-header-types">
-                    <p id="pokemonFirstType" class="pokemon-header-type"></p>
-                    <p id="pokemonSecondType" style="display:none;" class="pokemon-header-type"></p>
+
+
+    <screen id="screen">
+
+        <div class="head-btn">
+            <img src="icons/pfeil-links-black.png">
+            <img class="pokeball" src="icons/pokeball.png">
+            <img src="icons/menu.png">
+        </div>
+
+        <div class="h1-container">
+            <h1>Pokedex</h1>
+        </div>
+
+        <div class="pokemon">
+
+            <div class="pokemon-card">
+
+                <span class="pokemon-card-name">Charizard</span>
+
+                <div class="pokemon-card-content">
+
+                    <div class="pokemon-card-text">
+                        <span class="pokemon-card-type">Fire</span>
+                        <span class="pokemon-card-type">Flying</span>
+                    </div>
+    
+                    <img class="pokemon-card-img" src="icons/Glurak.png">
+
                 </div>
-            </div>
-            <div class="pokemon-header-text-right">
-                <img src="icons/herz.png">
-                <p id="pokemonNumber" class="pokemon-header-number"></p>
-                <p id="germanPokemonName" class="pokemon-header-animal"></p>
+
+                <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
             </div>
 
+            <div class="pokemon-card">
+
+                <span class="pokemon-card-name">Charizard</span>
+
+                <div class="pokemon-card-content">
+
+                    <div class="pokemon-card-text">
+                        <span class="pokemon-card-type">Fire</span>
+                        <span class="pokemon-card-type">Flying</span>
+                    </div>
+    
+                    <img class="pokemon-card-img" src="icons/Glurak.png">
+
+                </div>
+
+                <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
+            </div>
+
+            <div class="pokemon-card">
+
+                <span class="pokemon-card-name">Charizard</span>
+
+                <div class="pokemon-card-content">
+
+                    <div class="pokemon-card-text">
+                        <span class="pokemon-card-type">Fire</span>
+                        <span class="pokemon-card-type">Flying</span>
+                    </div>
+    
+                    <img class="pokemon-card-img" src="icons/Glurak.png">
+
+                </div>
+
+                <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
+            </div>
+
+            <div class="pokemon-card">
+
+                <span class="pokemon-card-name">Charizard</span>
+
+                <div class="pokemon-card-content">
+
+                    <div class="pokemon-card-text">
+                        <span class="pokemon-card-type">Fire</span>
+                        <span class="pokemon-card-type">Flying</span>
+                    </div>
+    
+                    <img class="pokemon-card-img" src="icons/Glurak.png">
+
+                </div>
+
+                <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
+            </div>
+
+            <div class="pokemon-card">
+
+                <span class="pokemon-card-name">Charizard</span>
+
+                <div class="pokemon-card-content">
+
+                    <div class="pokemon-card-text">
+                        <span class="pokemon-card-type">Fire</span>
+                        <span class="pokemon-card-type">Flying</span>
+                    </div>
+    
+                    <img class="pokemon-card-img" src="icons/Glurak.png">
+
+                </div>
+
+                <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
+            </div>
+
+
+
         </div>
 
-        <img id="pokemonArtwork" src="">
 
-    </header>
-
-    <div class="info-container">
-
-        <div class="nav-bar">
-            <p onclick="renderPokemonDescription()">About</p>
-            <p>Base Stats</p>
-            <p onclick="renderPokemonEvolutions()">Evolution</p>
-            <p>Moves</p>
-        </div>
-
-        <div id="content-container">
+    </screen>
 
 
-            
-        </div>
-
-
-
-    </div>
 
 </body>
 

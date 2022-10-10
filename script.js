@@ -16,12 +16,11 @@ let backgroundColors2 = [{ 'normal': '#a7a7a7', 'fire': '#fa8975', 'water': '#7b
 
 async function loadPokemonAPIs() {
 
-    let url = `https://pokeapi.co/api/v2/pokemon/marill`;
+    let url = `https://pokeapi.co/api/v2/pokemon/gyarados`;
     let response = await fetch(url);
-    currentPokemon = await response.json();
+    currentPokemon = await response.json(); //General API
 
-    console.log('Loaded Pokemon:', currentPokemon); //General API
-
+    console.log('Loaded Pokemon:', currentPokemon);
 
     let pokemonID = currentPokemon['id'];
     let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${pokemonID}/`;
@@ -31,14 +30,17 @@ async function loadPokemonAPIs() {
     console.log('Pokemon Spezies:', pokemonSpeciesAsJson);
 
 
+
+    loadPokemonEvolutions();
+    renderPokemon();
+}
+
+async function loadPokemonEvolutions() {
     let pokemonEvolutionURL = pokemonSpeciesAsJson['evolution_chain']['url'];
-    let pokemonEvolution = pokemonEvolutionURL;
-    let pokemonEvolutionResponse = await fetch(pokemonEvolution);
+    let pokemonEvolutionResponse = await fetch(pokemonEvolutionURL);
     pokemonEvolutionAsJson = await pokemonEvolutionResponse.json(); // Evolution API
 
     console.log('Pokemon Evolution :', pokemonEvolutionAsJson);
-
-    renderPokemon();
 }
 
 function renderPokemon() {
@@ -81,7 +83,7 @@ function getPokemonName() {
 
 function getPokemonTypes() {
     currentPokemonType1 = currentPokemon['types']['0']['type']['name'];
-    if (pokemonHasOnlyOneType()) {  
+    if (pokemonHasOnlyOneType()) {
         renderpokemonWithOneType();
     } else {
         renderpokemonWithTwoTypes();
@@ -108,13 +110,13 @@ function renderpokemonWithTwoTypes() {
 function setBackgroundForOneType() {
     let backgroundColor1 = backgroundColors1[0][currentPokemonType1];
     let backgroundColor2 = backgroundColors2[0][currentPokemonType1];
-    document.getElementById('pokedex').style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
+    document.getElementById('certain-pokemon').style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
 }
 
 function setBackgroundForTwoTypes() {
     let backgroundColor1 = backgroundColors1[0][currentPokemonType1];
     let backgroundColor2 = backgroundColors1[0][currentPokemonType2];
-    document.getElementById('pokedex').style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
+    document.getElementById('certain-pokemon').style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
 }
 
 function getPokemonNumber() {
@@ -145,20 +147,107 @@ async function getGermanName() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*********************************************POKEMON BASE STATS V***********************************************/
+
+let pokemonStats = [];
+
+const CONFIG_BG_COLOR = [
+    'rgba(75, 192, 192, 0.2)',
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(54, 162, 235, 0.2)',
+    'rgba(255, 206, 86, 0.2)',
+    'rgba(153, 102, 255, 0.2)',
+    'rgba(255, 159, 64, 0.2)'
+];
+
+const CONFIG_BORDER_COLOR = [
+    'rgba(75, 192, 192, 1)',
+    'rgba(255, 99, 132, 1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(255, 206, 86, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)'
+]
+
+function renderBaseStats() {
+    getBaseStatsHTML();
+    getAPIData();
+    drawChart();
+
+}
+
+function getAPIData() {
+
+    let allPokemonStats = currentPokemon['stats'];
+    for (let i = 0; i < 6; i++) {
+        let singlePokemonStat = allPokemonStats[`${i}`]['base_stat'];
+        pokemonStats.push(singlePokemonStat);
+    }
+
+}
+
+function drawChart() {  // From 'Chart.js'
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['HP.', 'Atk.', 'Def.', 'Sp-Atk.', 'Sp-Def.', 'Init'],
+            datasets: [{
+                label: '# of Votes',
+                data: pokemonStats,
+                backgroundColor: CONFIG_BG_COLOR,
+                borderColor: CONFIG_BORDER_COLOR,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+}
+
+function getBaseStatsHTML() {
+
+    document.getElementById('content-container').innerHTML = `
+
+    <div id="base-stats">
+
+    <canvas id="myChart" width="400" height="400"></canvas>
+
+    </div>
+
+`;
+
+}
+
+/*********************************************POKEMON BASE STATS ^***********************************************/
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*********************************************POKEMON ABOUT v***********************************************/
 
+/*********************************************IMPORTANT PART v**************************************************/
+
+
 async function renderPokemonDescription() {
+    renderAboutHTML();
     renderEnglishDescription();
     renderGeneralInfos();
 }
 
 function renderEnglishDescription() {
-    renderAboutHTML();
     for (let i = 10; i < 25; i++) { // 15 descriptions will be checked to find an english one
-        if (pokemonSpeciesAsJson['flavor_text_entries'][`${i}`]['language']['name'] == 'en') {
-            let pokemonDescription = pokemonSpeciesAsJson['flavor_text_entries'][`${i}`]['flavor_text'];
-            document.getElementById('pokemon-description').innerHTML = pokemonDescription;
-        } else {}
+        if (descriptionIsInEnglish(i)) {
+            displayEnglishDescription(i);
+        } else { }
     }
 }
 
@@ -168,6 +257,22 @@ function renderGeneralInfos() {
     checkAndRenderIfLegendary();
     renderGenera();
     renderShape();
+}
+
+/*********************************************IMPORTANT PART ^**************************************************/
+
+
+
+/*********************************************HELP FUNCTIONS v**************************************************/
+
+
+function descriptionIsInEnglish(i) {
+    return pokemonSpeciesAsJson['flavor_text_entries'][`${i}`]['language']['name'] == 'en'
+}
+
+function displayEnglishDescription(i) {
+    let pokemonDescription = pokemonSpeciesAsJson['flavor_text_entries'][`${i}`]['flavor_text'];
+    document.getElementById('pokemon-description').innerHTML = pokemonDescription;
 }
 
 function renderAbilities() {
@@ -187,12 +292,12 @@ function renderAbilities() {
 }
 
 function renderPokemonWeight() {
-    let pokemonWeight =+ (currentPokemon['weight'] / 10)
+    let pokemonWeight = + (currentPokemon['weight'] / 10)
     document.getElementById('weight').innerHTML = `${pokemonWeight} Kg`;
 }
 
 function checkAndRenderIfLegendary() {
-    if(pokemonSpeciesAsJson['is_legendary'] == true) {
+    if (pokemonSpeciesAsJson['is_legendary'] == true) {
         document.getElementById('legendary').innerHTML = 'Yes';
     } else {
         document.getElementById('legendary').innerHTML = 'No';
@@ -258,6 +363,8 @@ function renderAboutHTML() {
 
 }
 
+/*********************************************HELP FUNCTIONS ^**************************************************/
+
 /*********************************************POKEMON ABOUT ^***********************************************/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -292,7 +399,7 @@ async function checkIfThereIsMoreThanOneStage() {
 
 function renderPokemonFirstStage() {
     renderFirstStageImg();
-    getFirstEvolutionName();   
+    getFirstEvolutionName();
 }
 
 function renderSecondStagePokemon() {
@@ -357,7 +464,7 @@ function getTriggerForFirstEvolution() {
             document.getElementById('first-evolution').innerHTML = `Lvl. ${minLvl}`;
         } else {
             let minFriendship = evolutionTriggerPoint['min_happiness'];
-            document.getElementById('first-evolution').innerHTML = `Min. Happiness of ${minFriendship}`;
+            document.getElementById('first-evolution').innerHTML = `Friendship of ${minFriendship}`;
         }
     } else {
         if (evolutionTrigger == 'trade') {
@@ -400,7 +507,7 @@ function getTriggerForSecondEvolution() {
             document.getElementById('second-evolution').innerHTML = `Lvl. ${minLvl}`;
         } else {
             let minFriendship = evolutionTriggerPoint['min_happiness'];
-            document.getElementById('second-evolution').innerHTML = `Min. Happiness of ${minFriendship}`;
+            document.getElementById('second-evolution').innerHTML = `Friendship of ${minFriendship}`;
         }
     } else {
         if (evolutionTrigger == 'trade') {
@@ -416,20 +523,20 @@ function getTriggerForSecondEvolution() {
 
 function noThirdStage() {
     document.getElementById('evolution-3').src = '';
-    let unnecessaryItems = ['second-ev-trigger','third-evolution-name','third-evolution-container',];
+    let unnecessaryItems = ['second-ev-trigger', 'third-evolution-name', 'third-evolution-container',];
     for (let i = 0; i < unnecessaryItems.length; i++) {
         const id = unnecessaryItems[i];
-        document.getElementById(`${id}`).style ='display:none;';
+        document.getElementById(`${id}`).style = 'display:none;';
     }
 }
 
 function noSecondOrThirdStage() {
     document.getElementById('evolution-2').src = '';
     document.getElementById('evolution-3').src = '';
-    let unnecessaryItems = ['first-ev-arrow','second-evolution-name','second-evolution-container','second-ev-trigger','third-evolution-name','third-evolution-container',];
+    let unnecessaryItems = ['first-ev-arrow', 'second-evolution-name', 'second-evolution-container', 'second-ev-trigger', 'third-evolution-name', 'third-evolution-container',];
     for (let i = 0; i < unnecessaryItems.length; i++) {
         const id = unnecessaryItems[i];
-        document.getElementById(`${id}`).style ='display:none;';
+        document.getElementById(`${id}`).style = 'display:none;';
     }
     document.getElementById('first-evolution').innerHTML = 'No Futher Evolution'
 }
@@ -482,3 +589,75 @@ function loadEvolutionHTML() {
 /*********************************************HELP FUNCTIONS ^**************************************************/
 
 /*********************************************POKEMON EVOLUTION ^***********************************************/
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*********************************************POKEMON MOVES v***********************************************/
+
+let pokemonMovesJSON = [];
+
+function renderPokemonMoves() {
+    getMovesHTML();
+    getAllLvlLearnedMoves();
+    sortAllMovesByLvl();
+    displayPokemonMoves();
+}
+
+function getAllLvlLearnedMoves() {
+    let allPokemonMoves = currentPokemon['moves'];
+    for (let i = 0; i < allPokemonMoves.length; i++) {
+        const oneMoveArray = allPokemonMoves[i];
+
+        let oneMoveLowerCase = oneMoveArray['move']['name'];
+        let oneMove = upperCaseFirstLetter(oneMoveLowerCase);
+        let learnsOnLvl = oneMoveArray['version_group_details']['0']['level_learned_at'];
+
+        if (learnsOnLvl > 0) {
+            pokemonMovesJSON.push({'lvl' : `${learnsOnLvl}`, 'move' : `${oneMove}`});
+        } else {}   
+    }
+}
+
+function sortAllMovesByLvl() {
+    pokemonMovesJSON.sort(function(a, b) {
+        return parseFloat(a.lvl) - parseFloat(b.lvl);
+    });
+}
+
+function displayPokemonMoves() {
+    for (let i = 0; i < pokemonMovesJSON.length; i++) {
+        let oneMove = pokemonMovesJSON[`${i}`]['move'];
+        let learnsOnLvl = pokemonMovesJSON[`${i}`]['lvl'];
+        document.getElementById('lvl-table').innerHTML += `
+        <tr>
+            <td>
+            ${oneMove}
+            </td>
+            <td>
+            ${learnsOnLvl}
+            </td>
+        </tr>
+        `;
+    }
+}
+
+function getMovesHTML() {
+    document.getElementById('content-container').innerHTML = '';
+    document.getElementById('content-container').innerHTML = `
+    <div id="moves">
+
+        <h2>Attacks through Lvl-Up</h2>
+
+        <table id="lvl-table">
+
+        </table>
+
+    </div>    
+    `;
+}
+
+/*********************************************POKEMON MOVES ^***********************************************/
