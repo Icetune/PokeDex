@@ -14,22 +14,83 @@ let backgroundColors2 = [{ 'normal': '#a7a7a7', 'fire': '#fa8975', 'water': '#7b
 
 /*********************************************GENERAL v***********************************************/
 
-async function loadPokemonAPIs() {
+async function renderPokemonEntrie(ID) {
 
-    let url = `https://pokeapi.co/api/v2/pokemon/gyarados`;
-    let response = await fetch(url);
-    currentPokemon = await response.json(); //General API
 
-    console.log('Loaded Pokemon:', currentPokemon);
+    document.getElementById('body').innerHTML = '';
+    document.getElementById('body').innerHTML = `
+    
+    <header id="certain-pokemon">
 
-    let pokemonID = currentPokemon['id'];
-    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${pokemonID}/`;
+    <div class="pokemon-header-text">
+
+        <div class="pokemon-header-text-left">
+                <img onclick="renderAllPokemon()" src="icons/pfeil-links.png">
+            <h1 id="pokemonName"></h1>
+            <div class="pokemon-header-types">
+                <p id="pokemonFirstType" class="pokemon-header-type"></p>
+                <p id="pokemonSecondType" style="display:none;" class="pokemon-header-type"></p>
+            </div>
+        </div>
+
+        <div class="pokemon-header-text-right">
+            <img src="icons/herz.png">
+            <p id="pokemonNumber" class="pokemon-header-number"></p>
+            <p id="germanPokemonName" class="pokemon-header-animal"></p>
+        </div>
+
+    </div>
+
+    <img id="pokemonArtwork" src="">
+
+</header>
+
+<div class="info-container">
+
+    <div class="nav-bar">
+        <p onclick="renderPokemonDescription()">About</p>
+        <p onclick="renderBaseStats()">Base Stats</p>
+        <p onclick="renderPokemonEvolutions()">Evolution</p>
+        <p onclick="renderPokemonMoves()">Moves</p>
+    </div>
+
+    <div id="content-container"></div>
+
+</div>
+    
+    `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${ID}/`;
     let pokemonSpeciesResponse = await fetch(pokemonSpecies);
     pokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
 
     console.log('Pokemon Spezies:', pokemonSpeciesAsJson);
 
+    let currentPokemonName = pokemonSpeciesAsJson['name'];
+    document.title = `Pokedex || ${currentPokemonName}`;
 
+
+    
+    let url = `https://pokeapi.co/api/v2/pokemon/${currentPokemonName}`;
+    let response = await fetch(url);
+    currentPokemon = await response.json(); //General API
+
+    console.log('Loaded Pokemon:', currentPokemon);
 
     loadPokemonEvolutions();
     renderPokemon();
@@ -55,6 +116,178 @@ function upperCaseFirstLetter(someWord) {
 }
 
 /*********************************************GENERAL ^***********************************************/
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*********************************************ALL POKEMON v***********************************************/
+
+
+
+
+async function renderAllPokemon() {
+
+    document.getElementById('body').innerHTML = '';
+    document.getElementById('body').innerHTML = `
+    
+    <screen id="screen">
+
+        <div class="head-btn">
+            <img src="icons/pfeil-links-black.png">
+            <img class="pokeball" src="icons/pokeball.png">
+            <img src="icons/menu.png">
+        </div>
+
+        <div class="h1-container">
+            <h1>Pokedex</h1>
+        </div>
+
+        <div id="all-pokemon" class="pokemon"></div>
+
+    </screen>
+    
+    `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    document.getElementById('all-pokemon').innerHTML = '';
+
+    for (let i = 1; i < 400; i++) {
+
+        let ii = i + 1000;
+
+        document.getElementById('all-pokemon').innerHTML += `
+        
+
+            <div onclick="renderPokemonEntrie(${i})" id="pokemon-card${i}" class="pokemon-card">
+
+                <span id="pokemon-card-name${i}" class="pokemon-card-name"></span>
+
+                <div class="pokemon-card-content">
+
+                    <div class="pokemon-card-text">
+                        <span id="${i}pokemon-card-type1" class="pokemon-card-type"></span>
+                        <span id="${ii}pokemon-card-type2" class="pokemon-card-type"></span>
+                    </div>
+
+                    <img id="pokemon-crad-img${i}" class="pokemon-card-img" src="">
+
+                </div>
+
+                <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
+            </div>
+        
+        `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
+        let pokemonSpeciesResponse = await fetch(pokemonSpecies);
+        let allPokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
+
+        let onePokemon = allPokemonSpeciesAsJson['name'];
+        let onePokemonUpperCase = upperCaseFirstLetter(onePokemon)
+        document.getElementById(`pokemon-card-name${i}`).innerHTML = onePokemonUpperCase;
+
+
+
+
+
+
+        let url = `https://pokeapi.co/api/v2/pokemon/${onePokemon}`;
+        let response = await fetch(url);
+        let onePokemonApi = await response.json(); //General API
+
+        let onePokemonImg = onePokemonApi['sprites']['other']['official-artwork']['front_default'];
+        document.getElementById(`pokemon-crad-img${i}`).src = onePokemonImg;
+
+
+
+
+
+        let onePokemonType1 = onePokemonApi['types']['0']['type']['name'];
+        document.getElementById(`${i}pokemon-card-type1`).innerHTML = onePokemonType1;
+
+        if(onePokemonApi['types'].length == 2) {
+
+            let onePokemonType2 = onePokemonApi['types']['1']['type']['name'];
+            document.getElementById(`${ii}pokemon-card-type2`).innerHTML = onePokemonType2;
+
+            
+            let backgroundColor1 = backgroundColors1[0][onePokemonType1];
+            let backgroundColor2 = backgroundColors2[0][onePokemonType2];
+            document.getElementById(`pokemon-card${i}`).style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
+
+        }else{
+
+            document.getElementById(`${ii}pokemon-card-type2`).style ="display:none;";
+
+            let backgroundColor1 = backgroundColors1[0][onePokemonType1];
+            let backgroundColor2 = backgroundColors2[0][onePokemonType1];
+            document.getElementById(`pokemon-card${i}`).style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
+
+        }
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*********************************************ALL POKEMON ^***********************************************/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -617,13 +850,13 @@ function getAllLvlLearnedMoves() {
         let learnsOnLvl = oneMoveArray['version_group_details']['0']['level_learned_at'];
 
         if (learnsOnLvl > 0) {
-            pokemonMovesJSON.push({'lvl' : `${learnsOnLvl}`, 'move' : `${oneMove}`});
-        } else {}   
+            pokemonMovesJSON.push({ 'lvl': `${learnsOnLvl}`, 'move': `${oneMove}` });
+        } else { }
     }
 }
 
 function sortAllMovesByLvl() {
-    pokemonMovesJSON.sort(function(a, b) {
+    pokemonMovesJSON.sort(function (a, b) {
         return parseFloat(a.lvl) - parseFloat(b.lvl);
     });
 }
