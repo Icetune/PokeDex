@@ -19,6 +19,10 @@ h1 {
     padding-top: 32px;
 }
 
+#heart {
+    cursor: pointer;
+}
+
 .pokemon-header-text {
     display: flex;
     justify-content: space-between;
@@ -91,6 +95,19 @@ h1 {
     font-weight: 500;
     padding-top: 48px;
     cursor: pointer;
+}
+
+.nav-bar-link:hover {
+    color: black;
+    padding-bottom: 4px;
+    border-bottom: 2px solid rgb(52, 52, 221);
+}
+
+.nav-bar-link-active {
+    color: black;
+    font-weight: 600;
+    padding-bottom: 4px;
+    border-bottom: 2px solid rgb(52, 52, 221);
 }
 
 

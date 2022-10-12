@@ -9,13 +9,14 @@ let currentPokemonGerman;
 let pokemonSpeciesAsJson;
 let pokemonEvolutionAsJson;
 
+let allPokemonNames = [];
+
 let backgroundColors1 = [{ 'normal': '#BBBBAA', 'fire': '#F4563A', 'water': '#3399FF', 'grass': '#77CC55', 'flying': '#6699FF', 'fighting': '#BB5544', 'poison': '#AA5599', 'electric': '#FFCC33', 'ground': '#DDBB55', 'rock': '#BBAA66', 'psychic': '#FF5599', 'ice': '#83D4EF', 'bug': '#AABB22', 'ghost': '#6666BB', 'steel': '#AAAABB', 'dragon': '#7766EE', 'dark': '#775544', 'fairy': '#FFAAFF' }];
 let backgroundColors2 = [{ 'normal': '#a7a7a7', 'fire': '#fa8975', 'water': '#7bbdff', 'grass': '#a8f888', 'flying': '#c3d7ff', 'fighting': '#e99687', 'poison': '#eb8ed8', 'electric': '#694f00', 'ground': '#775f15', 'rock': '#817647', 'psychic': '#ffadce', 'ice': '#daf6ff', 'bug': '#dce97d', 'ghost': '#31315e', 'steel': '#d6d6d6', 'dragon': '#411692', 'dark': '#1f130d', 'fairy': '#fde4fd' }];
 
 /*********************************************GENERAL v***********************************************/
 
 async function renderPokemonEntrie(ID) {
-
 
     document.getElementById('body').innerHTML = '';
     document.getElementById('body').innerHTML = `
@@ -25,7 +26,7 @@ async function renderPokemonEntrie(ID) {
     <div class="pokemon-header-text">
 
         <div class="pokemon-header-text-left">
-                <img onclick="renderAllPokemon()" src="icons/pfeil-links.png">
+                <img onclick="renderAllPokemon()" style="cursor: pointer;" src="icons/pfeil-links.png">
             <h1 id="pokemonName"></h1>
             <div class="pokemon-header-types">
                 <p id="pokemonFirstType" class="pokemon-header-type"></p>
@@ -34,7 +35,7 @@ async function renderPokemonEntrie(ID) {
         </div>
 
         <div class="pokemon-header-text-right">
-            <img src="icons/herz.png">
+            <img onclick="likePokemon()" id="heart" src="icons/herz.png">
             <p id="pokemonNumber" class="pokemon-header-number"></p>
             <p id="germanPokemonName" class="pokemon-header-animal"></p>
         </div>
@@ -48,10 +49,10 @@ async function renderPokemonEntrie(ID) {
 <div class="info-container">
 
     <div class="nav-bar">
-        <p onclick="renderPokemonDescription()">About</p>
-        <p onclick="renderBaseStats()">Base Stats</p>
-        <p onclick="renderPokemonEvolutions()">Evolution</p>
-        <p onclick="renderPokemonMoves()">Moves</p>
+        <p id="about-link" class="nav-bar-link nav-bar-link-active" onclick="renderPokemonDescription()">About</p>
+        <p id="base-stats-link" class="nav-bar-link" onclick="renderBaseStats()">Base Stats</p>
+        <p id="evolution-link" class="nav-bar-link" onclick="renderPokemonEvolutions()">Evolution</p>
+        <p id="moves-link" class="nav-bar-link" onclick="renderPokemonMoves()">Moves</p>
     </div>
 
     <div id="content-container"></div>
@@ -85,7 +86,7 @@ async function renderPokemonEntrie(ID) {
     document.title = `Pokedex || ${currentPokemonName}`;
 
 
-    
+
     let url = `https://pokeapi.co/api/v2/pokemon/${currentPokemonName}`;
     let response = await fetch(url);
     currentPokemon = await response.json(); //General API
@@ -115,6 +116,32 @@ function upperCaseFirstLetter(someWord) {
     return upperCaseWord;
 }
 
+function likePokemon() {
+    let currentHeart = document.getElementById('heart').src;
+    if (currentHeart == 'http://127.0.0.1:5500/icons/herz.png') {
+        document.getElementById('heart').src = 'icons/herz-ausgefüllt.png';
+    } else {
+        document.getElementById('heart').src = 'icons/herz.png';
+    }
+}
+
+function filterPokemon() {
+    let search = document.getElementById('search').value;
+    search = search.toLowerCase();
+
+    for (let i = 0; i < pokemonRenderd; i++) {
+        if (allPokemonNames[`${i}`].includes(search)) {
+            console.log(allPokemonNames[`${i}`]);
+            renderSearchedPokemon(allPokemonNames[`${i}`]);
+        }else{}
+    }
+
+}
+
+function renderSearchedPokemon(searchedPokemon){
+    document.getElementById('all-pokemon').innerHTML = '';
+}
+
 /*********************************************GENERAL ^***********************************************/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,18 +152,116 @@ function upperCaseFirstLetter(someWord) {
 
 /*********************************************ALL POKEMON v***********************************************/
 
+let pokemonRenderd = 31;
+
+function renderAllPokemon() {
+    renderAllPokemonHTML();
+    document.getElementById('all-pokemon').innerHTML = '';
+    for (let i = 1; i < pokemonRenderd; i++) {
+        let ii = i + 1000;
+        renderPokemonCardHTML(i, ii);
+        loasPokemonSpecies(i, ii);
+    }
+}
+
+function render50MorePokemon() {
+    let pokemonAmount = pokemonRenderd;
+    pokemonRenderd = pokemonAmount + 50;
+    if (pokemonRenderd < 807) {
+        renderMorePokemon(pokemonAmount);
+    } else { }
+}
+
+function renderMorePokemon(pokemonAmount) {
+    for (let i = pokemonAmount; i < pokemonRenderd; i++) {
+        let ii = i + 1000;
+        renderPokemonCardHTML(i, ii);
+        loasPokemonSpecies(i, ii);
+    }
+}
+
+function renderPokemonCardHTML(i, ii) {
+    document.getElementById('all-pokemon').innerHTML += `
+        
+    <div onclick="renderPokemonEntrie(${i})" id="pokemon-card${i}" class="pokemon-card">
+
+        <span id="pokemon-card-name${i}" class="pokemon-card-name"></span>
+
+        <div class="pokemon-card-content">
+
+            <div class="pokemon-card-text">
+                <span id="${i}pokemon-card-type1" class="pokemon-card-type"></span>
+                <span id="${ii}pokemon-card-type2" class="pokemon-card-type"></span>
+            </div>
+
+            <img id="pokemon-crad-img${i}" class="pokemon-card-img" src="">
+
+        </div>
+
+        <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
+    </div>`;
+}
+
+async function loasPokemonSpecies(i, ii) {
+    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
+    let pokemonSpeciesResponse = await fetch(pokemonSpecies);
+    let allPokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
+    loadPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii);
+}
 
 
 
-async function renderAllPokemon() {
+async function loadPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii) {
+    let onePokemon = allPokemonSpeciesAsJson['name'];
+    allPokemonNames.push(onePokemon);
+    let onePokemonUpperCase = upperCaseFirstLetter(onePokemon)
+    document.getElementById(`pokemon-card-name${i}`).innerHTML = onePokemonUpperCase;
+    let url = `https://pokeapi.co/api/v2/pokemon/${onePokemon}`;
+    let response = await fetch(url);
+    let onePokemonApi = await response.json(); //General API
+    let onePokemonImg = onePokemonApi['sprites']['other']['official-artwork']['front_default'];
+    document.getElementById(`pokemon-crad-img${i}`).src = onePokemonImg;
+    getPokemonCardTypes(onePokemonApi, i, ii)
+}
 
+function getPokemonCardTypes(onePokemonApi, i, ii) {
+    if (onePokemonApi['types'].length == 2) {
+        PokemonWithCardTwoTypes(onePokemonApi, i, ii);
+    } else {
+        PokemonWithCardOneType(onePokemonApi, i, ii);
+    }
+}
+
+function PokemonWithCardTwoTypes(onePokemonApi, i, ii) {
+    let onePokemonType1 = onePokemonApi['types']['0']['type']['name'];
+    document.getElementById(`${i}pokemon-card-type1`).innerHTML = onePokemonType1;
+
+    let onePokemonType2 = onePokemonApi['types']['1']['type']['name'];
+    document.getElementById(`${ii}pokemon-card-type2`).innerHTML = onePokemonType2;
+    let backgroundColor1 = backgroundColors1[0][onePokemonType1];
+    let backgroundColor2 = backgroundColors2[0][onePokemonType2];
+    document.getElementById(`pokemon-card${i}`).style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
+}
+
+function PokemonWithCardOneType(onePokemonApi, i, ii) {
+    let onePokemonType1 = onePokemonApi['types']['0']['type']['name'];
+    document.getElementById(`${i}pokemon-card-type1`).innerHTML = onePokemonType1;
+
+    document.getElementById(`${ii}pokemon-card-type2`).style = "display:none;";
+    let backgroundColor1 = backgroundColors1[0][onePokemonType1];
+    let backgroundColor2 = backgroundColors2[0][onePokemonType1];
+    document.getElementById(`pokemon-card${i}`).style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
+}
+
+function renderAllPokemonHTML() {
     document.getElementById('body').innerHTML = '';
     document.getElementById('body').innerHTML = `
     
     <screen id="screen">
 
         <div class="head-btn">
-            <img src="icons/pfeil-links-black.png">
+            <input type="text" id="search" onkeydown="filterPokemon()">
             <img class="pokeball" src="icons/pokeball.png">
             <img src="icons/menu.png">
         </div>
@@ -147,130 +272,11 @@ async function renderAllPokemon() {
 
         <div id="all-pokemon" class="pokemon"></div>
 
+        <button class="load-more-btn" onclick="render50MorePokemon()">Render 50 more Pokemon!</button>
+
     </screen>
     
     `;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    document.getElementById('all-pokemon').innerHTML = '';
-
-    for (let i = 1; i < 400; i++) {
-
-        let ii = i + 1000;
-
-        document.getElementById('all-pokemon').innerHTML += `
-        
-
-            <div onclick="renderPokemonEntrie(${i})" id="pokemon-card${i}" class="pokemon-card">
-
-                <span id="pokemon-card-name${i}" class="pokemon-card-name"></span>
-
-                <div class="pokemon-card-content">
-
-                    <div class="pokemon-card-text">
-                        <span id="${i}pokemon-card-type1" class="pokemon-card-type"></span>
-                        <span id="${ii}pokemon-card-type2" class="pokemon-card-type"></span>
-                    </div>
-
-                    <img id="pokemon-crad-img${i}" class="pokemon-card-img" src="">
-
-                </div>
-
-                <img class="pokemon-card-pokeball" src="icons/pokeball.png">
-
-            </div>
-        
-        `;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
-        let pokemonSpeciesResponse = await fetch(pokemonSpecies);
-        let allPokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
-
-        let onePokemon = allPokemonSpeciesAsJson['name'];
-        let onePokemonUpperCase = upperCaseFirstLetter(onePokemon)
-        document.getElementById(`pokemon-card-name${i}`).innerHTML = onePokemonUpperCase;
-
-
-
-
-
-
-        let url = `https://pokeapi.co/api/v2/pokemon/${onePokemon}`;
-        let response = await fetch(url);
-        let onePokemonApi = await response.json(); //General API
-
-        let onePokemonImg = onePokemonApi['sprites']['other']['official-artwork']['front_default'];
-        document.getElementById(`pokemon-crad-img${i}`).src = onePokemonImg;
-
-
-
-
-
-        let onePokemonType1 = onePokemonApi['types']['0']['type']['name'];
-        document.getElementById(`${i}pokemon-card-type1`).innerHTML = onePokemonType1;
-
-        if(onePokemonApi['types'].length == 2) {
-
-            let onePokemonType2 = onePokemonApi['types']['1']['type']['name'];
-            document.getElementById(`${ii}pokemon-card-type2`).innerHTML = onePokemonType2;
-
-            
-            let backgroundColor1 = backgroundColors1[0][onePokemonType1];
-            let backgroundColor2 = backgroundColors2[0][onePokemonType2];
-            document.getElementById(`pokemon-card${i}`).style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
-
-        }else{
-
-            document.getElementById(`${ii}pokemon-card-type2`).style ="display:none;";
-
-            let backgroundColor1 = backgroundColors1[0][onePokemonType1];
-            let backgroundColor2 = backgroundColors2[0][onePokemonType1];
-            document.getElementById(`pokemon-card${i}`).style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
-
-        }
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
@@ -436,7 +442,7 @@ function drawChart() {  // From 'Chart.js'
         options: {
             scales: {
                 y: {
-                    beginAtZero: false
+                    beginAtZero: true
                 }
             }
         }
@@ -444,6 +450,8 @@ function drawChart() {  // From 'Chart.js'
 }
 
 function getBaseStatsHTML() {
+
+    highlightBaseStats();
 
     document.getElementById('content-container').innerHTML = `
 
@@ -455,6 +463,13 @@ function getBaseStatsHTML() {
 
 `;
 
+}
+
+function highlightBaseStats() {
+    document.getElementById('base-stats-link').classList.add('nav-bar-link-active');
+    document.getElementById('about-link').classList.remove('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
+    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
 }
 
 /*********************************************POKEMON BASE STATS ^***********************************************/
@@ -548,6 +563,8 @@ function renderShape() {
 
 function renderAboutHTML() {
 
+    highlightAbout();
+
     document.getElementById('content-container').innerHTML = `
     
     <div id="pokemon-description"></div>
@@ -594,6 +611,13 @@ function renderAboutHTML() {
     
     `;
 
+}
+
+function highlightAbout() {
+    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
+    document.getElementById('about-link').classList.add('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
+    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
 }
 
 /*********************************************HELP FUNCTIONS ^**************************************************/
@@ -775,6 +799,9 @@ function noSecondOrThirdStage() {
 }
 
 function loadEvolutionHTML() {
+
+    highlightEvolution();
+
     document.getElementById('content-container').innerHTML = '';
     document.getElementById('content-container').innerHTML = `
     
@@ -817,6 +844,13 @@ function loadEvolutionHTML() {
     </div>
     
     `;
+}
+
+function highlightEvolution() {
+    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
+    document.getElementById('about-link').classList.remove('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.add('nav-bar-link-active');
+    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
 }
 
 /*********************************************HELP FUNCTIONS ^**************************************************/
@@ -876,9 +910,13 @@ function displayPokemonMoves() {
         </tr>
         `;
     }
+    pokemonMovesJSON = [];
 }
 
 function getMovesHTML() {
+
+    highlightMoves();
+
     document.getElementById('content-container').innerHTML = '';
     document.getElementById('content-container').innerHTML = `
     <div id="moves">
@@ -891,6 +929,13 @@ function getMovesHTML() {
 
     </div>    
     `;
+}
+
+function highlightMoves() {
+    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
+    document.getElementById('about-link').classList.remove('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
+    document.getElementById('moves-link').classList.add('nav-bar-link-active');
 }
 
 /*********************************************POKEMON MOVES ^***********************************************/
