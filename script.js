@@ -9,15 +9,55 @@ let currentPokemonGerman;
 let pokemonSpeciesAsJson;
 let pokemonEvolutionAsJson;
 
-let allPokemonNames = [];
-
 let backgroundColors1 = [{ 'normal': '#BBBBAA', 'fire': '#F4563A', 'water': '#3399FF', 'grass': '#77CC55', 'flying': '#6699FF', 'fighting': '#BB5544', 'poison': '#AA5599', 'electric': '#FFCC33', 'ground': '#DDBB55', 'rock': '#BBAA66', 'psychic': '#FF5599', 'ice': '#83D4EF', 'bug': '#AABB22', 'ghost': '#6666BB', 'steel': '#AAAABB', 'dragon': '#7766EE', 'dark': '#775544', 'fairy': '#FFAAFF' }];
 let backgroundColors2 = [{ 'normal': '#a7a7a7', 'fire': '#fa8975', 'water': '#7bbdff', 'grass': '#a8f888', 'flying': '#c3d7ff', 'fighting': '#e99687', 'poison': '#eb8ed8', 'electric': '#694f00', 'ground': '#775f15', 'rock': '#817647', 'psychic': '#ffadce', 'ice': '#daf6ff', 'bug': '#dce97d', 'ghost': '#31315e', 'steel': '#d6d6d6', 'dragon': '#411692', 'dark': '#1f130d', 'fairy': '#fde4fd' }];
 
 /*********************************************GENERAL v***********************************************/
 
+function renderPokemon() {
+    renderPokemonInfo();
+    renderPokemonDescription();
+}
+
+function upperCaseFirstLetter(someWord) {
+    let firstLetter = String(someWord.charAt(0)).toLocaleUpperCase();
+    upperCaseWord = firstLetter + someWord.slice(1);
+    return upperCaseWord;
+}
+
+function likePokemon() {
+    let currentHeart = document.getElementById('heart').src;
+    if (currentHeart == 'http://127.0.0.1:5500/icons/herz.png') {
+        document.getElementById('heart').src = 'icons/herz-ausgefüllt.png';
+    } else {
+        document.getElementById('heart').src = 'icons/herz.png';
+    }
+}
+
 async function renderPokemonEntrie(ID) {
 
+    renderPokemonEntrieHTML();
+
+    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${ID}/`;
+    let pokemonSpeciesResponse = await fetch(pokemonSpecies);
+    pokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
+
+    loadPokemonEntrieName(pokemonSpeciesAsJson);
+
+    let url = `https://pokeapi.co/api/v2/pokemon/${currentPokemonName}`;
+    let response = await fetch(url);
+    currentPokemon = await response.json(); //General API
+
+    loadPokemonEvolutions();
+    renderPokemon();
+}
+
+function loadPokemonEntrieName(pokemonSpeciesAsJson) {
+    let currentPokemonName = pokemonSpeciesAsJson['name'];
+    document.title = `Pokedex || ${currentPokemonName}`;
+}
+
+function renderPokemonEntrieHTML() {
     document.getElementById('body').innerHTML = '';
     document.getElementById('body').innerHTML = `
     
@@ -58,88 +98,7 @@ async function renderPokemonEntrie(ID) {
     <div id="content-container"></div>
 
 </div>
-    
-    `;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${ID}/`;
-    let pokemonSpeciesResponse = await fetch(pokemonSpecies);
-    pokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
-
-    console.log('Pokemon Spezies:', pokemonSpeciesAsJson);
-
-    let currentPokemonName = pokemonSpeciesAsJson['name'];
-    document.title = `Pokedex || ${currentPokemonName}`;
-
-
-
-    let url = `https://pokeapi.co/api/v2/pokemon/${currentPokemonName}`;
-    let response = await fetch(url);
-    currentPokemon = await response.json(); //General API
-
-    console.log('Loaded Pokemon:', currentPokemon);
-
-    loadPokemonEvolutions();
-    renderPokemon();
-}
-
-async function loadPokemonEvolutions() {
-    let pokemonEvolutionURL = pokemonSpeciesAsJson['evolution_chain']['url'];
-    let pokemonEvolutionResponse = await fetch(pokemonEvolutionURL);
-    pokemonEvolutionAsJson = await pokemonEvolutionResponse.json(); // Evolution API
-
-    console.log('Pokemon Evolution :', pokemonEvolutionAsJson);
-}
-
-function renderPokemon() {
-    renderPokemonInfo();
-    renderPokemonDescription();
-}
-
-function upperCaseFirstLetter(someWord) {
-    let firstLetter = String(someWord.charAt(0)).toLocaleUpperCase();
-    upperCaseWord = firstLetter + someWord.slice(1);
-    return upperCaseWord;
-}
-
-function likePokemon() {
-    let currentHeart = document.getElementById('heart').src;
-    if (currentHeart == 'http://127.0.0.1:5500/icons/herz.png') {
-        document.getElementById('heart').src = 'icons/herz-ausgefüllt.png';
-    } else {
-        document.getElementById('heart').src = 'icons/herz.png';
-    }
-}
-
-function filterPokemon() {
-    let search = document.getElementById('search').value;
-    search = search.toLowerCase();
-
-    for (let i = 0; i < pokemonRenderd; i++) {
-        if (allPokemonNames[`${i}`].includes(search)) {
-            console.log(allPokemonNames[`${i}`]);
-            renderSearchedPokemon(allPokemonNames[`${i}`]);
-        }else{}
-    }
-
-}
-
-function renderSearchedPokemon(searchedPokemon){
-    document.getElementById('all-pokemon').innerHTML = '';
+`;
 }
 
 /*********************************************GENERAL ^***********************************************/
@@ -153,6 +112,8 @@ function renderSearchedPokemon(searchedPokemon){
 /*********************************************ALL POKEMON v***********************************************/
 
 let pokemonRenderd = 31;
+let renderedPokemonNames = [];
+
 
 function renderAllPokemon() {
     renderAllPokemonHTML();
@@ -160,8 +121,9 @@ function renderAllPokemon() {
     for (let i = 1; i < pokemonRenderd; i++) {
         let ii = i + 1000;
         renderPokemonCardHTML(i, ii);
-        loasPokemonSpecies(i, ii);
+        loadPokemonSpecies(i, ii);
     }
+    document.getElementById('load-more-btn').style = "display:block;"
 }
 
 function render50MorePokemon() {
@@ -176,45 +138,20 @@ function renderMorePokemon(pokemonAmount) {
     for (let i = pokemonAmount; i < pokemonRenderd; i++) {
         let ii = i + 1000;
         renderPokemonCardHTML(i, ii);
-        loasPokemonSpecies(i, ii);
+        loadPokemonSpecies(i, ii);
     }
 }
 
-function renderPokemonCardHTML(i, ii) {
-    document.getElementById('all-pokemon').innerHTML += `
-        
-    <div onclick="renderPokemonEntrie(${i})" id="pokemon-card${i}" class="pokemon-card">
-
-        <span id="pokemon-card-name${i}" class="pokemon-card-name"></span>
-
-        <div class="pokemon-card-content">
-
-            <div class="pokemon-card-text">
-                <span id="${i}pokemon-card-type1" class="pokemon-card-type"></span>
-                <span id="${ii}pokemon-card-type2" class="pokemon-card-type"></span>
-            </div>
-
-            <img id="pokemon-crad-img${i}" class="pokemon-card-img" src="">
-
-        </div>
-
-        <img class="pokemon-card-pokeball" src="icons/pokeball.png">
-
-    </div>`;
-}
-
-async function loasPokemonSpecies(i, ii) {
+async function loadPokemonSpecies(i, ii) {
     let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
     let pokemonSpeciesResponse = await fetch(pokemonSpecies);
     let allPokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
     loadPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii);
 }
 
-
-
 async function loadPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii) {
     let onePokemon = allPokemonSpeciesAsJson['name'];
-    allPokemonNames.push(onePokemon);
+    renderedPokemonNames.push({onePokemon, i});
     let onePokemonUpperCase = upperCaseFirstLetter(onePokemon)
     document.getElementById(`pokemon-card-name${i}`).innerHTML = onePokemonUpperCase;
     let url = `https://pokeapi.co/api/v2/pokemon/${onePokemon}`;
@@ -254,6 +191,81 @@ function PokemonWithCardOneType(onePokemonApi, i, ii) {
     document.getElementById(`pokemon-card${i}`).style = `background-image: linear-gradient(115deg, ${backgroundColor1}, ${backgroundColor2})`;
 }
 
+function searchPokemon() {
+    document.getElementById('load-more-btn').style = "display:none;"
+    search = getInputValue();
+    if (search == '') {
+        renderAllPokemon();
+    } else {
+        renderPokemonWithInputValue();
+    }
+}
+
+function getInputValue() {
+    let search = document.getElementById('search').value;   
+    search = search.toLowerCase();
+    return search
+}
+
+function renderPokemonWithInputValue() {
+    document.getElementById('all-pokemon').innerHTML = '';
+    for (let j = 0; j < renderedPokemonNames.length; j++) {
+        if (renderedPokemonNames[`${j}`]['onePokemon'].includes(search)) {
+            let i = renderedPokemonNames[`${j}`]['i'];
+            let ii = i + 1000;
+            renderSearchedPokemon(i, ii)
+        }else{}
+    }
+}
+
+
+function renderSearchedPokemon(i, ii){
+    renderPokemonCardHTML(i, ii);
+    loadSearchedPokemonSpecies(i, ii);
+}
+
+async function loadSearchedPokemonSpecies(i, ii) {
+    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
+    let pokemonSpeciesResponse = await fetch(pokemonSpecies);
+    let allPokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
+    loadSearchedPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii);
+}
+
+async function loadSearchedPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii) {
+    let onePokemon = allPokemonSpeciesAsJson['name'];
+    let onePokemonUpperCase = upperCaseFirstLetter(onePokemon)
+    document.getElementById(`pokemon-card-name${i}`).innerHTML = onePokemonUpperCase;
+    let url = `https://pokeapi.co/api/v2/pokemon/${onePokemon}`;
+    let response = await fetch(url);
+    let onePokemonApi = await response.json(); //General API
+    let onePokemonImg = onePokemonApi['sprites']['other']['official-artwork']['front_default'];
+    document.getElementById(`pokemon-crad-img${i}`).src = onePokemonImg;
+    getPokemonCardTypes(onePokemonApi, i, ii)
+}
+
+function renderPokemonCardHTML(i, ii) {
+    document.getElementById('all-pokemon').innerHTML += `
+        
+    <div onclick="renderPokemonEntrie(${i})" id="pokemon-card${i}" class="pokemon-card">
+
+        <span id="pokemon-card-name${i}" class="pokemon-card-name"></span>
+
+        <div class="pokemon-card-content">
+
+            <div class="pokemon-card-text">
+                <span id="${i}pokemon-card-type1" class="pokemon-card-type"></span>
+                <span id="${ii}pokemon-card-type2" class="pokemon-card-type"></span>
+            </div>
+
+            <img id="pokemon-crad-img${i}" class="pokemon-card-img" src="">
+
+        </div>
+
+        <img class="pokemon-card-pokeball" src="icons/pokeball.png">
+
+    </div>`;
+}
+
 function renderAllPokemonHTML() {
     document.getElementById('body').innerHTML = '';
     document.getElementById('body').innerHTML = `
@@ -261,7 +273,7 @@ function renderAllPokemonHTML() {
     <screen id="screen">
 
         <div class="head-btn">
-            <input type="text" id="search" onkeydown="filterPokemon()">
+            <input type="text" id="search" oninput="searchPokemon()">
             <img class="pokeball" src="icons/pokeball.png">
             <img src="icons/menu.png">
         </div>
@@ -272,26 +284,12 @@ function renderAllPokemonHTML() {
 
         <div id="all-pokemon" class="pokemon"></div>
 
-        <button class="load-more-btn" onclick="render50MorePokemon()">Render 50 more Pokemon!</button>
+        <button id="load-more-btn" class="load-more-btn" onclick="render50MorePokemon()">Render 50 more Pokemon!</button>
 
     </screen>
     
     `;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*********************************************ALL POKEMON ^***********************************************/
 
@@ -449,10 +447,15 @@ function drawChart() {  // From 'Chart.js'
     });
 }
 
+function highlightBaseStats() {
+    document.getElementById('base-stats-link').classList.add('nav-bar-link-active');
+    document.getElementById('about-link').classList.remove('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
+    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
+}
+
 function getBaseStatsHTML() {
-
     highlightBaseStats();
-
     document.getElementById('content-container').innerHTML = `
 
     <div id="base-stats">
@@ -462,14 +465,6 @@ function getBaseStatsHTML() {
     </div>
 
 `;
-
-}
-
-function highlightBaseStats() {
-    document.getElementById('base-stats-link').classList.add('nav-bar-link-active');
-    document.getElementById('about-link').classList.remove('nav-bar-link-active');
-    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
-    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
 }
 
 /*********************************************POKEMON BASE STATS ^***********************************************/
@@ -561,6 +556,13 @@ function renderShape() {
     document.getElementById('shape').innerHTML = shape;
 }
 
+function highlightAbout() {
+    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
+    document.getElementById('about-link').classList.add('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
+    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
+}
+
 function renderAboutHTML() {
 
     highlightAbout();
@@ -613,13 +615,6 @@ function renderAboutHTML() {
 
 }
 
-function highlightAbout() {
-    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
-    document.getElementById('about-link').classList.add('nav-bar-link-active');
-    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
-    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
-}
-
 /*********************************************HELP FUNCTIONS ^**************************************************/
 
 /*********************************************POKEMON ABOUT ^***********************************************/
@@ -639,7 +634,6 @@ async function renderPokemonEvolutions() {
     renderPokemonFirstStage();
     checkIfThereIsMoreThanOneStage();
 }
-
 
 async function checkIfThereIsMoreThanOneStage() {
     if (pokemonHasMoreThanOneStage()) {
@@ -676,6 +670,12 @@ function renderThirdStagePokemon() {
 
 
 /*********************************************HELP FUNCTIONS v**************************************************/
+
+async function loadPokemonEvolutions() {
+    let pokemonEvolutionURL = pokemonSpeciesAsJson['evolution_chain']['url'];
+    let pokemonEvolutionResponse = await fetch(pokemonEvolutionURL);
+    pokemonEvolutionAsJson = await pokemonEvolutionResponse.json(); // Evolution API
+}
 
 async function renderFirstStageImg() {
     let pokemonStage1 = pokemonEvolutionAsJson['chain']['species']['name'];
@@ -798,6 +798,13 @@ function noSecondOrThirdStage() {
     document.getElementById('first-evolution').innerHTML = 'No Futher Evolution'
 }
 
+function highlightEvolution() {
+    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
+    document.getElementById('about-link').classList.remove('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.add('nav-bar-link-active');
+    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
+}
+
 function loadEvolutionHTML() {
 
     highlightEvolution();
@@ -844,13 +851,6 @@ function loadEvolutionHTML() {
     </div>
     
     `;
-}
-
-function highlightEvolution() {
-    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
-    document.getElementById('about-link').classList.remove('nav-bar-link-active');
-    document.getElementById('evolution-link').classList.add('nav-bar-link-active');
-    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
 }
 
 /*********************************************HELP FUNCTIONS ^**************************************************/
@@ -913,6 +913,13 @@ function displayPokemonMoves() {
     pokemonMovesJSON = [];
 }
 
+function highlightMoves() {
+    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
+    document.getElementById('about-link').classList.remove('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
+    document.getElementById('moves-link').classList.add('nav-bar-link-active');
+}
+
 function getMovesHTML() {
 
     highlightMoves();
@@ -929,13 +936,6 @@ function getMovesHTML() {
 
     </div>    
     `;
-}
-
-function highlightMoves() {
-    document.getElementById('base-stats-link').classList.remove('nav-bar-link-active');
-    document.getElementById('about-link').classList.remove('nav-bar-link-active');
-    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
-    document.getElementById('moves-link').classList.add('nav-bar-link-active');
 }
 
 /*********************************************POKEMON MOVES ^***********************************************/
