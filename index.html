@@ -20,7 +20,7 @@
     <screen id="screen">
 
         <div class="head-btn">
-            <img src="icons/pfeil-links-black.png">
+            <input placeholder="Search a Pokemon..." type="text" id="search" oninput="searchPokemon()">
             <img class="pokeball" src="icons/pokeball.png">
             <img src="icons/menu.png">
         </div>
@@ -31,8 +31,10 @@
 
         <div id="all-pokemon" class="pokemon"></div>
 
-    </screen>
+        <button id="load-more-btn" class="load-more-btn" onclick="render50MorePokemon()">Render 50 more Pokemon!</button>
 
+    </screen>
+    
 </body>
 
 </html>

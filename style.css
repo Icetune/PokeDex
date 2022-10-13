@@ -14,6 +14,25 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
+}
+
+#search {
+    width: 40%;
+    height: 25px;
+    background-color: rgb(235, 235, 235);
+    border: none;
+    padding-block: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Open Sans';
+    font-weight: 500;
+}
+
+#search:focus {
+    outline: none;
 }
 
 .head-btn {
@@ -136,4 +155,16 @@ body {
 
 .load-more-btn:active {
     background-color: rgba(0, 171, 250, 0.8);
+}
+
+@media (min-width: 900px) {
+
+    #search {
+        width: 300px;
+    }
+
+    .evolution-container {
+        flex-direction:row;
+    }
+
 }

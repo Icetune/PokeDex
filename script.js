@@ -35,26 +35,21 @@ function likePokemon() {
 }
 
 async function renderPokemonEntrie(ID) {
-
     renderPokemonEntrieHTML();
 
-    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${ID}/`;
+    let pokemonSpecies = `https://pokeapi.co/api/v2/pokemon-species/${ID}/`;                /////////////////////////////
     let pokemonSpeciesResponse = await fetch(pokemonSpecies);
-    pokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API
+    pokemonSpeciesAsJson = await pokemonSpeciesResponse.json(); // Species API              /////////////////////////////
 
-    loadPokemonEntrieName(pokemonSpeciesAsJson);
-
+    let currentPokemonName = pokemonSpeciesAsJson['name'];                                  // FUNKTION LÄSST SICH NICHT KÜRZEN
+    document.title = `Pokedex || ${currentPokemonName}`;
+    /////////////////////////////
     let url = `https://pokeapi.co/api/v2/pokemon/${currentPokemonName}`;
-    let response = await fetch(url);
+    let response = await fetch(url);                                                        /////////////////////////////
     currentPokemon = await response.json(); //General API
 
     loadPokemonEvolutions();
     renderPokemon();
-}
-
-function loadPokemonEntrieName(pokemonSpeciesAsJson) {
-    let currentPokemonName = pokemonSpeciesAsJson['name'];
-    document.title = `Pokedex || ${currentPokemonName}`;
 }
 
 function renderPokemonEntrieHTML() {
@@ -151,7 +146,7 @@ async function loadPokemonSpecies(i, ii) {
 
 async function loadPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii) {
     let onePokemon = allPokemonSpeciesAsJson['name'];
-    renderedPokemonNames.push({onePokemon, i});
+    renderedPokemonNames.push({ onePokemon, i });
     let onePokemonUpperCase = upperCaseFirstLetter(onePokemon)
     document.getElementById(`pokemon-card-name${i}`).innerHTML = onePokemonUpperCase;
     let url = `https://pokeapi.co/api/v2/pokemon/${onePokemon}`;
@@ -202,7 +197,7 @@ function searchPokemon() {
 }
 
 function getInputValue() {
-    let search = document.getElementById('search').value;   
+    let search = document.getElementById('search').value;
     search = search.toLowerCase();
     return search
 }
@@ -214,12 +209,11 @@ function renderPokemonWithInputValue() {
             let i = renderedPokemonNames[`${j}`]['i'];
             let ii = i + 1000;
             renderSearchedPokemon(i, ii)
-        }else{}
+        } else { }
     }
 }
 
-
-function renderSearchedPokemon(i, ii){
+function renderSearchedPokemon(i, ii) {
     renderPokemonCardHTML(i, ii);
     loadSearchedPokemonSpecies(i, ii);
 }
@@ -243,6 +237,31 @@ async function loadSearchedPokemonCardImgAndTypes(allPokemonSpeciesAsJson, i, ii
     getPokemonCardTypes(onePokemonApi, i, ii)
 }
 
+function renderAllPokemonHTML() {
+    document.getElementById('body').innerHTML = '';
+    document.getElementById('body').innerHTML = `
+    
+    <screen id="screen">
+
+        <div class="head-btn">
+            <input placeholder="Search a Pokemon..." type="text" id="search" oninput="searchPokemon()">
+            <img class="pokeball" src="icons/pokeball.png">
+            <img src="icons/menu.png">
+        </div>
+
+        <div class="h1-container">
+            <h1>Pokedex</h1>
+        </div>
+
+        <div id="all-pokemon" class="pokemon"></div>
+
+        <button id="load-more-btn" class="load-more-btn" onclick="render50MorePokemon()">Render 50 more Pokemon!</button>
+
+    </screen>
+    
+    `;
+}
+
 function renderPokemonCardHTML(i, ii) {
     document.getElementById('all-pokemon').innerHTML += `
         
@@ -264,31 +283,6 @@ function renderPokemonCardHTML(i, ii) {
         <img class="pokemon-card-pokeball" src="icons/pokeball.png">
 
     </div>`;
-}
-
-function renderAllPokemonHTML() {
-    document.getElementById('body').innerHTML = '';
-    document.getElementById('body').innerHTML = `
-    
-    <screen id="screen">
-
-        <div class="head-btn">
-            <input type="text" id="search" oninput="searchPokemon()">
-            <img class="pokeball" src="icons/pokeball.png">
-            <img src="icons/menu.png">
-        </div>
-
-        <div class="h1-container">
-            <h1>Pokedex</h1>
-        </div>
-
-        <div id="all-pokemon" class="pokemon"></div>
-
-        <button id="load-more-btn" class="load-more-btn" onclick="render50MorePokemon()">Render 50 more Pokemon!</button>
-
-    </screen>
-    
-    `;
 }
 
 /*********************************************ALL POKEMON ^***********************************************/
@@ -377,97 +371,6 @@ async function getGermanName() {
 }
 
 /*********************************************POKEMON INFO ^***********************************************/
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*********************************************POKEMON BASE STATS V***********************************************/
-
-let pokemonStats = [];
-
-const CONFIG_BG_COLOR = [
-    'rgba(75, 192, 192, 0.2)',
-    'rgba(255, 99, 132, 0.2)',
-    'rgba(54, 162, 235, 0.2)',
-    'rgba(255, 206, 86, 0.2)',
-    'rgba(153, 102, 255, 0.2)',
-    'rgba(255, 159, 64, 0.2)'
-];
-
-const CONFIG_BORDER_COLOR = [
-    'rgba(75, 192, 192, 1)',
-    'rgba(255, 99, 132, 1)',
-    'rgba(54, 162, 235, 1)',
-    'rgba(255, 206, 86, 1)',
-    'rgba(153, 102, 255, 1)',
-    'rgba(255, 159, 64, 1)'
-]
-
-function renderBaseStats() {
-    getBaseStatsHTML();
-    getAPIData();
-    drawChart();
-
-}
-
-function getAPIData() {
-
-    let allPokemonStats = currentPokemon['stats'];
-    for (let i = 0; i < 6; i++) {
-        let singlePokemonStat = allPokemonStats[`${i}`]['base_stat'];
-        pokemonStats.push(singlePokemonStat);
-    }
-
-}
-
-function drawChart() {  // From 'Chart.js'
-    const ctx = document.getElementById('myChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['HP.', 'Atk.', 'Def.', 'Sp-Atk.', 'Sp-Def.', 'Init'],
-            datasets: [{
-                label: '# of Votes',
-                data: pokemonStats,
-                backgroundColor: CONFIG_BG_COLOR,
-                borderColor: CONFIG_BORDER_COLOR,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-function highlightBaseStats() {
-    document.getElementById('base-stats-link').classList.add('nav-bar-link-active');
-    document.getElementById('about-link').classList.remove('nav-bar-link-active');
-    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
-    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
-}
-
-function getBaseStatsHTML() {
-    highlightBaseStats();
-    document.getElementById('content-container').innerHTML = `
-
-    <div id="base-stats">
-
-    <canvas id="myChart" width="400" height="400"></canvas>
-
-    </div>
-
-`;
-}
-
-/*********************************************POKEMON BASE STATS ^***********************************************/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -610,6 +513,8 @@ function renderAboutHTML() {
             </td>
         </tr>
     </table>
+
+    <div class="box"></div>
     
     `;
 
@@ -618,6 +523,99 @@ function renderAboutHTML() {
 /*********************************************HELP FUNCTIONS ^**************************************************/
 
 /*********************************************POKEMON ABOUT ^***********************************************/
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*********************************************POKEMON BASE STATS V***********************************************/
+
+let pokemonStats = [];
+
+const CONFIG_BG_COLOR = [
+    'rgba(75, 192, 192, 0.2)',
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(54, 162, 235, 0.2)',
+    'rgba(255, 206, 86, 0.2)',
+    'rgba(153, 102, 255, 0.2)',
+    'rgba(255, 159, 64, 0.2)'
+];
+
+const CONFIG_BORDER_COLOR = [
+    'rgba(75, 192, 192, 1)',
+    'rgba(255, 99, 132, 1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(255, 206, 86, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)'
+]
+
+function renderBaseStats() {
+    getBaseStatsHTML();
+    getAPIData();
+    drawChart();
+
+}
+
+function getAPIData() {
+
+    let allPokemonStats = currentPokemon['stats'];
+    for (let i = 0; i < 6; i++) {
+        let singlePokemonStat = allPokemonStats[`${i}`]['base_stat'];
+        pokemonStats.push(singlePokemonStat);
+    }
+
+}
+
+function drawChart() {  // From 'Chart.js'
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['HP.', 'Atk.', 'Def.', 'Sp-Atk.', 'Sp-Def.', 'Init'],
+            datasets: [{
+                label: '# of Votes',
+                data: pokemonStats,
+                backgroundColor: CONFIG_BG_COLOR,
+                borderColor: CONFIG_BORDER_COLOR,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function highlightBaseStats() {
+    document.getElementById('base-stats-link').classList.add('nav-bar-link-active');
+    document.getElementById('about-link').classList.remove('nav-bar-link-active');
+    document.getElementById('evolution-link').classList.remove('nav-bar-link-active');
+    document.getElementById('moves-link').classList.remove('nav-bar-link-active');
+}
+
+function getBaseStatsHTML() {
+    highlightBaseStats();
+    document.getElementById('content-container').innerHTML = `
+
+    <div id="base-stats">
+
+    <canvas id="myChart" width="400" height="400"></canvas>
+
+    <div class="box"></div>
+
+    </div>
+
+`;
+}
+
+/*********************************************POKEMON BASE STATS ^***********************************************/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -814,44 +812,143 @@ function loadEvolutionHTML() {
     
     <div class="evolution-container">
 
-        <div id="first-evolution-name" class="evolution-name"></div>
+        <div style="text-align: center;">
+            <div id="first-evolution-name" class="evolution-name"></div>
 
-        <div class="evolution-img-container">
-            <img id="evolution-1" class="evolution-img" src="">
-            <img class="evolution-img-background" src="icons/pokeball.png">
+            <div class="evolution-img-container">
+                <img id="evolution-1" class="evolution-img" src="">
+                <img class="evolution-img-background" src="icons/pokeball.png">
+            </div>
         </div>
 
-        <div class="evolution-trigger" style="position: relative; bottom: 55px;">
+        <div class="evolution-trigger evt-1">
             <div id="first-evolution"></div>
             <img id="first-ev-arrow" src="icons/pfeil-runter.png">
+            <img id="first-ev-arrow" src="icons/pfeil-rechts.png">
         </div>
 
-        <div id="second-evolution-name" class="evolution-name" style="position: relative; bottom: 50px;"></div>
+        <div style="text-align: center;">
 
-        <div id="second-evolution-container" class="evolution-img-container"
-            style="position: relative; bottom: 50px;">
-            <img id="evolution-2" class="evolution-img" src="">
-            <img class="evolution-img-background" src="icons/pokeball.png">
+            <div id="second-evolution-name" class="evolution-name sen"></div>
+
+            <div id="second-evolution-container" class="evolution-img-container evic2">
+                <img id="evolution-2" class="evolution-img" src="">
+                <img class="evolution-img-background" src="icons/pokeball.png">
+            </div>
 
         </div>
 
-        <div id="second-ev-trigger" class="evolution-trigger" style="position: relative; bottom: 100px;">
+        <div id="second-ev-trigger" class="evolution-trigger evt-2">
             <div id="second-evolution"></div>
             <img src="icons/pfeil-runter.png">
         </div>
 
-        <div id="third-evolution-name" class="evolution-name" style="position: relative; bottom: 95px;"></div>
+        <div style="text-align: center;">
+            <div id="third-evolution-name" class="evolution-name ten"></div>
 
-        <div id="third-evolution-container" class="evolution-img-container"
-            style="position: relative; bottom: 95px;">
-            <img id="evolution-3" class="evolution-img" src="">
-            <img class="evolution-img-background" src="icons/pokeball.png">
+            <div id="third-evolution-container" class="evolution-img-container evic3">
+                <img id="evolution-3" class="evolution-img" src="">
+                <img class="evolution-img-background" src="icons/pokeball.png">
+            </div>
+
         </div>
 
     </div>
     
     `;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function loadEvolutionHTML() {
+
+//     highlightEvolution();
+
+//     document.getElementById('content-container').innerHTML = '';
+//     document.getElementById('content-container').innerHTML = `
+
+//     <div class="evolution-container">
+
+//         <div id="first-evolution-name" class="evolution-name"></div>
+
+//         <div class="evolution-img-container">
+//             <img id="evolution-1" class="evolution-img" src="">
+//             <img class="evolution-img-background" src="icons/pokeball.png">
+//         </div>
+
+//         <div class="evolution-trigger" style="position: relative; bottom: 55px;">
+//             <div id="first-evolution"></div>
+//             <img id="first-ev-arrow" src="icons/pfeil-runter.png">
+//         </div>
+
+//         <div id="second-evolution-name" class="evolution-name" style="position: relative; bottom: 50px;"></div>
+
+//         <div id="second-evolution-container" class="evolution-img-container"
+//             style="position: relative; bottom: 50px;">
+//             <img id="evolution-2" class="evolution-img" src="">
+//             <img class="evolution-img-background" src="icons/pokeball.png">
+
+//         </div>
+
+//         <div id="second-ev-trigger" class="evolution-trigger" style="position: relative; bottom: 100px;">
+//             <div id="second-evolution"></div>
+//             <img src="icons/pfeil-runter.png">
+//         </div>
+
+//         <div id="third-evolution-name" class="evolution-name" style="position: relative; bottom: 95px;"></div>
+
+//         <div id="third-evolution-container" class="evolution-img-container"
+//             style="position: relative; bottom: 95px;">
+//             <img id="evolution-3" class="evolution-img" src="">
+//             <img class="evolution-img-background" src="icons/pokeball.png">
+//         </div>
+
+//     </div>
+
+//     `;
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*********************************************HELP FUNCTIONS ^**************************************************/
 
@@ -933,6 +1030,8 @@ function getMovesHTML() {
         <table id="lvl-table">
 
         </table>
+
+        <div class="box"></div>
 
     </div>    
     `;
