@@ -163,8 +163,4 @@ body {
         width: 300px;
     }
 
-    .evolution-container {
-        flex-direction:row;
-    }
-
 }

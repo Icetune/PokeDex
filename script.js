@@ -61,7 +61,7 @@ function renderPokemonEntrieHTML() {
     <div class="pokemon-header-text">
 
         <div class="pokemon-header-text-left">
-                <img onclick="renderAllPokemon()" style="cursor: pointer;" src="icons/pfeil-links.png">
+                <img onclick="renderAllPokemon()" class="back-arrow" src="icons/pfeil-links.png">
             <h1 id="pokemonName"></h1>
             <div class="pokemon-header-types">
                 <p id="pokemonFirstType" class="pokemon-header-type"></p>
@@ -471,51 +471,50 @@ function renderAboutHTML() {
     highlightAbout();
 
     document.getElementById('content-container').innerHTML = `
-    
-    <div id="pokemon-description"></div>
 
-    <table class="about-table">
-        <tr>
-            <td class="td-left">
-                Abilities
-            </td>
-            <td class="td-right">
-                <p id="ability-1"></p>
-                <p id="ability-2">Ability2</p>
-            </td>
-        </tr>
-        <tr>
-            <td class="td-left">
-                Weight
-            </td>
-            <td class="td-right" id="weight">
-            </td>
-        </tr>
-        <tr>
-            <td class="td-left">
-                Legendary
-            </td>
-            <td class="td-right" id="legendary">
-            </td>
-        </tr>
-        <tr>
-            <td class="td-left">
-                Genera
-            </td>
-            <td class="td-right" id="genera">
-            </td>
-        </tr>
-        <tr>
-            <td class="td-left">
-                Shape
-            </td>
-            <td class="td-right" id="shape">
-            </td>
-        </tr>
-    </table>
+        <div id="pokemon-description"></div>
 
-    <div class="box"></div>
-    
+        <table class="about-table">
+            <tr>
+                <td class="td-left">
+                    Abilities
+                </td>
+                <td class="td-right">
+                    <p id="ability-1"></p>
+                    <p id="ability-2">Ability2</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="td-left">
+                    Weight
+                </td>
+                <td class="td-right" id="weight">
+                </td>
+            </tr>
+            <tr>
+                <td class="td-left">
+                    Legendary
+                </td>
+                <td class="td-right" id="legendary">
+                </td>
+            </tr>
+            <tr>
+                <td class="td-left">
+                    Genera
+                </td>
+                <td class="td-right" id="genera">
+                </td>
+            </tr>
+            <tr>
+                <td class="td-left">
+                    Shape
+                </td>
+                <td class="td-right" id="shape">
+                </td>
+            </tr>
+        </table>
+
+        <div class="box about-box"></div>
     `;
 
 }
@@ -576,7 +575,7 @@ function drawChart() {  // From 'Chart.js'
         data: {
             labels: ['HP.', 'Atk.', 'Def.', 'Sp-Atk.', 'Sp-Def.', 'Init'],
             datasets: [{
-                label: '# of Votes',
+                label: 'Pokemon Base HP',
                 data: pokemonStats,
                 backgroundColor: CONFIG_BG_COLOR,
                 borderColor: CONFIG_BORDER_COLOR,
@@ -584,6 +583,7 @@ function drawChart() {  // From 'Chart.js'
             }]
         },
         options: {
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true
@@ -823,8 +823,8 @@ function loadEvolutionHTML() {
 
         <div class="evolution-trigger evt-1">
             <div id="first-evolution"></div>
-            <img id="first-ev-arrow" src="icons/pfeil-runter.png">
-            <img id="first-ev-arrow" src="icons/pfeil-rechts.png">
+            <img id="first-ev-arrow" class="first-ev-arrow" src="icons/pfeil-runter.png">
+            <img class="first-ev-arrow-right" src="icons/pfeil-rechts.png">
         </div>
 
         <div style="text-align: center;">
@@ -840,7 +840,8 @@ function loadEvolutionHTML() {
 
         <div id="second-ev-trigger" class="evolution-trigger evt-2">
             <div id="second-evolution"></div>
-            <img src="icons/pfeil-runter.png">
+            <img class="first-ev-arrow" src="icons/pfeil-runter.png">
+            <img class="first-ev-arrow-right" src="icons/pfeil-rechts.png">
         </div>
 
         <div style="text-align: center;">
